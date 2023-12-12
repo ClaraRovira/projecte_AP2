@@ -5,7 +5,7 @@ from catan_game.observer import Observer
 
 def get_input():
     num_players = int(input("Enter number of players: "))
-    board_sizes = tuple(map(int, input("Enter board sizes (e.g., 8 6): ").split()))
+    board_sizes = tuple(map(int, input("Enter board sizes [cols, rows]: ").split()))
     path_price = int(input("Enter path price: "))
     city_price = int(input("Enter city price: "))
     destruction_price = int(input("Enter destruction price: "))
@@ -29,7 +29,6 @@ def get_input():
     return board_sizes, path_price, city_price, destruction_price, players, init_cell_values
 
 def process_user_input(user_input, game):
-    # Process user input and update game state
     parts = user_input.split()
     if len(parts) >= 4:
         action = parts[2].lower()
@@ -42,23 +41,44 @@ def process_user_input(user_input, game):
             game.build_path(player_id, path_coords)
         elif action == 'destruct':
             destruct_coords = tuple(map(int, parts[3:]))
-            game.destruct_city(player_id, destruct_coords)
-        else:
-            print("Invalid action")
+            game.destroy_city(player_id, destruct_coords)
+    elif parts[0] == 'exit':
+        game.game_over = True
+    else:
+        print("Invalid action")
 
 def main():
-    board_sizes, path_price, city_price, destruction_price, players, init_cell_values = get_input()
+    #board_sizes, path_price, city_price, destruction_price, players, init_cell_values = get_input()
+    
+    # example variable values
+    board_sizes = [8, 6]
+    init_cell_values = [
+                            [5, 8, 9, 2, 5, 4, 3, 6],
+                            [1, 4, 2, 5, 7, 7, 9, 2],
+                            [5, 8, 9, 2, 5, 4, 3, 6],
+                            [1, 4, 2, 5, 7, 7, 9, 2],
+                            [5, 8, 9, 2, 5, 4, 3, 6],
+                            [1, 4, 2, 5, 7, 7, 9, 2]
+                        ]
+    players = [Player(1,'red', 10), Player(2,'green', 10), Player(3,'blue', 10)]
+    path_price = 5
+    city_price = 5
+    destruction_price = 5
 
     board = Board(board_sizes, init_cell_values)
     game = Game(board, players, path_price, city_price, destruction_price)
     observer = Observer(game)
+    observer.obtain_game_info()
 
     print('Game starts...')
     game.game_over = False
     
     while not game.is_game_over():
+        observer.run_game()
         user_input = input()
         process_user_input(user_input, game)
+    
+    observer.end_game()
 
 if __name__ == "__main__":
     main()
