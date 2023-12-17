@@ -41,11 +41,12 @@ class Observer:
                 self.screen.blit(text, text_rect)
 
     def draw_paths(self, offset_x=0):
-        for player, path in self.players_paths.items():
+        for player in self.players_paths:
             player_color = self.players_colors[player]['color']
-            start_pos = (path[0][1] * self.cell_size + offset_x, path[0][0] * self.cell_size)
-            end_pos = (path[1][1] * self.cell_size + offset_x, path[1][0] * self.cell_size)
-            pygame.draw.line(self.screen, player_color, start_pos, end_pos, 5)
+            for path in self.players_paths[player]:
+                start_pos = (path[0][1] * self.cell_size + offset_x, path[0][0] * self.cell_size)
+                end_pos = (path[1][1] * self.cell_size + offset_x, path[1][0] * self.cell_size)
+                pygame.draw.line(self.screen, player_color, start_pos, end_pos, 5)
 
     def draw_cities(self, offset_x=0):
         for player in self.players_cities:
@@ -57,6 +58,7 @@ class Observer:
                 self.screen.blit(text, text_rect)
 
     def obtain_game_state(self):
+        self.cell_numbers = self.game.get_board_cell_numbers()
         self.players_colors = self.game.get_players_colors()
         self.players_paths = self.game.get_players_paths()
         self.players_cities = self.game.get_players_cities()
@@ -81,12 +83,10 @@ class Observer:
         for i, (player, info) in enumerate(self.players_colors.items()):
             player_color = info['color']
 
-            # Draw player info rectangle
             pygame.draw.rect(self.screen, player_color,
                              (player_info_margin, i * player_info_height + player_info_margin, player_info_width,
                               player_info_height))
 
-            # Draw player text
             font = pygame.font.Font(None, 25)
             text = font.render(f'Player {player}', True, (255, 255, 255))
             text_rect = text.get_rect(
