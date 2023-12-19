@@ -18,28 +18,29 @@ class Game:
         return self.game_over
     
     def check_players_turn(self, player_id: int) -> bool:
-        turn = self.player_turn % len(self.num_players)
+        turn = self.player_turn % self.num_players
         if turn == 0:
-            turn = len(self.num_players)
+            turn = self.num_players
         return turn == player_id
 
     def is_valid_action(self, player_id: int, action: str, coordinates: Union[Path, Coord]) -> bool:
         valid_action = True
-        self.check_players_turn(player_id)
-        if action ==  "build city":
-            if self.check_available_resources(self.city_price) & self.check_if_player_can_build_city(player_id, coordinates):
-                return True
-            else: return False
-        elif action == "build path":
-            if self.check_available_resources(self.path_price) & self.check_if_player_can_build_path(player_id, coordinates):
-                return True
-            else: return False
-        elif action == "destroy city":
-            if self.check_available_resources(self.destruction_price) & self.check_if_player_can_destroy_city(player_id, coordinates):
-                return True
-            else: return False
-        else: 
-            print("Unknown action")
+        if self.check_players_turn(player_id):
+            if action ==  "build city":
+                if self.check_available_resources(player_id, self.city_price) & self.check_if_player_can_build_city(player_id, coordinates):
+                    return True
+                else: return False
+            elif action == "build path":
+                if self.check_available_resources(player_id, self.path_price) & self.check_if_player_can_build_path(player_id, coordinates):
+                    return True
+                else: return False
+            elif action == "destroy city":
+                if self.check_available_resources(player_id, self.destruction_price) & self.check_if_player_can_destroy_city(player_id, coordinates):
+                    return True
+                else: return False
+            else: 
+                print("Unknown action")
+        else: valid_action = False
         return valid_action
 
     def get_board_cell_numbers(self) -> list[list[int]]:
@@ -93,37 +94,37 @@ class Game:
             print("Invalid action")
         self.player_turn += 1
 
-    def pick_up_resources(player_id: int):
+    def pick_up_resources(self, player_id: int):
         # TODO: Add one unit per each unique cell that touches a city from the corresponding player_id
         pass
 
     def check_available_resources(self, player_id: int, prices: int) -> bool:
         # TODO: Check if player have enough resources to take the corresponding action
-        pass
+        return True
 
     def check_if_city_node_available(self, player_id: int, city_node: Coord) -> bool:
         # TODO: Check if node is available to construct a city
-        pass
+        return True
 
     def check_if_path_nodes_available(self, player_id: int, path_coord: Path) -> bool:
         # TODO: Check if node is available to construct a city
-        pass
+        return True
     
     def check_if_player_can_build_city(self, player_id: int,  city_coord: Coord) -> bool:
         # TODO: Check if player have permissions according to the game rules to build a city in the given coordinates
         if self.check_if_city_node_available(player_id, city_coord):
-            pass
-        else: pass
+            return True
+        else: return False
     
     def check_if_player_can_build_path(self, player_id: int, path_coord: Path) -> bool:
         if self.check_if_path_nodes_available(player_id, path_coord):
             # TODO: Check if player have permissions according to the game rules to build a path in the given coordinates
-            pass
-        else: pass
+            return True
+        else: return False
 
     def check_if_player_can_destroy_city(self, player_id: int, path_coord: Path) -> bool: 
         # TODO: Check if city exists from this player id
-        pass
+        return True
 
     def get_game_status(self):
         pass
