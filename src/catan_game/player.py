@@ -32,6 +32,7 @@ class Player:
         player_info = {
             "id": self.id,
             "color": self.color,
+            "rgb_color": self.get_rgb_color(),
             "resources": self.resources,
             "cities": len(self.cities),
             "cities_coord": self.cities,

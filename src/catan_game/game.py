@@ -49,23 +49,11 @@ class Game:
     def get_board_sizes(self) -> tuple[int, int]:
         return self.board.board_sizes
     
-    def get_players_colors(self) -> dict:
-        players_colors = {}
+    def get_players_info(self) -> dict:
+        players_info = {}
         for player in self.players.values():
-            players_colors[player.id] = {'color': player.get_rgb_color()}
-        return players_colors
-    
-    def get_players_paths(self) -> dict[int, list[Path]]:
-        players_paths = {}
-        for player in self.players.values():
-            players_paths[player.id] = player.paths 
-        return players_paths
-    
-    def get_players_cities(self) -> dict[int, list[Coord]]:
-        players_cities = {}
-        for player in self.players.values():
-            players_cities[player.id] = player.cities 
-        return players_cities
+            players_info[player.id] = player.get_info()
+        return players_info
 
     def build_city(self, player_id: int, city_coord: Coord) -> None:
         if self.is_valid_action(player_id, "build city", city_coord):

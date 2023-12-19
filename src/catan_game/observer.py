@@ -15,9 +15,8 @@ class Observer:
         self.fps = 30
         self.screen = None
         self.cell_numbers: list
-        self.players_colors = dict
         self.players_paths = dict
-        self.players_cities = dict
+        self.players_info = dict
 
     def obtain_game_info(self):
         self.cols, self.rows = self.game.get_board_sizes()
@@ -41,27 +40,27 @@ class Observer:
                 self.screen.blit(text, text_rect)
 
     def draw_paths(self, offset_x=0):
-        for player in self.players_paths:
-            player_color = self.players_colors[player]['color']
-            for path in self.players_paths[player]:
+        for id, player in self.players_info.items():
+            player_color = player['rgb_color']
+            paths = player['paths_coord']
+            for path in paths:
                 start_pos = (path[0][1] * self.cell_size + offset_x, path[0][0] * self.cell_size)
                 end_pos = (path[1][1] * self.cell_size + offset_x, path[1][0] * self.cell_size)
                 pygame.draw.line(self.screen, player_color, start_pos, end_pos, 5)
 
     def draw_cities(self, offset_x=0):
-        for player in self.players_cities:
-            player_color = self.players_colors[player]['color']
+        for id, player in self.players_info.items():
+            player_color = player['rgb_color']
+            cities = player['cities_coord']
             font = pygame.font.Font(None, 36)
-            for city in self.players_cities[player]:
+            for city in cities:
                 text = font.render('X', True, player_color)
                 text_rect = text.get_rect(center=(city[1] * self.cell_size + offset_x, city[0] * self.cell_size))
                 self.screen.blit(text, text_rect)
 
     def obtain_game_state(self):
         self.cell_numbers = self.game.get_board_cell_numbers()
-        self.players_colors = self.game.get_players_colors()
-        self.players_paths = self.game.get_players_paths()
-        self.players_cities = self.game.get_players_cities()
+        self.players_info = self.game.get_players_info() 
 
     def display_game_state(self):
         self.screen.fill((255, 255, 255))
@@ -75,13 +74,13 @@ class Observer:
     def draw_players_info(self):
         player_info_margin = 20
         player_info_width = self.extra_info_width - 2 * player_info_margin
-        total_players = len(self.players_colors)
+        total_players = len(self.players_info)
 
         available_height = self.height - 2 * player_info_margin
         player_info_height = available_height // total_players
 
-        for i, (player, info) in enumerate(self.players_colors.items()):
-            player_color = info['color']
+        for i, (player, info) in enumerate(self.players_info.items()):
+            player_color = info['rgb_color']
 
             pygame.draw.rect(self.screen, player_color,
                              (player_info_margin, i * player_info_height + player_info_margin, player_info_width,
